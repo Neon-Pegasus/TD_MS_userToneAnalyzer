@@ -23,7 +23,8 @@
     "body-parser": "^1.18.3",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
-    "nodemon": "^1.18.4"
+    "nodemon": "^1.18.4",
+    "redis": "^2.8.0"
   },
   "devDependencies": {
     "eslint": "^5.6.1",
