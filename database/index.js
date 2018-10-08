@@ -1,14 +1,35 @@
-const redis = require('redis');
+const Sequelize = require('sequelize');
 require('dotenv').config();
 
-const client = redis.createClient(
-  process.env.REDIS_PORT,
-  process.env.REDIS_HOST,
-  { password: process.env.REDIS_PASSWORD },
-);
-
-client.on('error', (err) => {
-  console.log('error', err);
+//  local connection
+const sequelize = new Sequelize('userIBM', 'root', `${process.env.DB_password}`, {
+  host: 'localhost',
+  dialect: 'mysql',
 });
 
-module.exports = client;
+//  cloud connection
+// const sequelize = new Sequelize(``)
+
+//  testing DB connection
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('DB connection established');
+  })
+  .catch((err) => {
+    console.error('Unable to connect to DB', err);
+  });
+
+//  DB models
+const User = sequelize.define('User', {
+  githubUsername: {
+    type: Sequelize.STRING,
+  },
+  SOUsername: {
+    type: Sequelize.STRING,
+  },
+});
+
+sequelize.sync();
+
+module.exports.User = User;
