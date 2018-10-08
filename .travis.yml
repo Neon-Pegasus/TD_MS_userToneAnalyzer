@@ -6,6 +6,14 @@ node_js:
   - "8"
   - "node"
 
+deploy:
+  provider: heroku
+  api_key:
+    secure: process.env.HEROKU_AUTH
+  app: tonedev-user-ibm
+  on:
+    repo: Neon-Pegasus/TD_MS_userToneAnalyzer
+
 cache:
   directories:
     - "node_modules"
