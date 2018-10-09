@@ -10,15 +10,14 @@ const port = process.env.PORT || 8888;
 app.use(bodyParser.json(), bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-  natLanAnalyze('hello world', (err, result) => {
-    if (err) {
-      console.log('err in analyzing data', err);
-    }
-    if (result) {
+  natLanAnalyze('hello')
+    .then((result) => {
       console.log(JSON.stringify(result, null, 2));
-    }
-  });
-  res.send('hello');
+      res.send('hello');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
 app.listen(port, () => {
