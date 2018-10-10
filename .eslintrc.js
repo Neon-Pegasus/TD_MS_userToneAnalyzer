@@ -12,6 +12,7 @@ module.exports = {
         }
     },
     rules: {
-        "no-underscore-dangle": "off"
+        "no-underscore-dangle": "off",
+        "arrow-body-style": ["error", "always"]
     },
 };

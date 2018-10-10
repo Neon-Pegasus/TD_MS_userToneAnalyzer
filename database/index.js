@@ -8,7 +8,7 @@ const sequelize = new Sequelize('userIBM', 'root', `${process.env.DB_password}`,
 });
 
 //  cloud connection
-// const sequelize = new Sequelize(``)
+// const sequelize = new Sequelize(`${process.env.CLEARDB_DATABASE_URL}`);
 
 //  testing DB connection
 sequelize
@@ -30,6 +30,45 @@ const User = sequelize.define('User', {
   },
 });
 
-sequelize.sync();
+const Answers = sequelize.define('Answers', {
+  answer: {
+    type: Sequelize.TEXT('long'),
+  },
+});
+
+const SOAnalysis = sequelize.define('SOAnalysis', {
+  positive: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  negative: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  neutral: {
+    type: Sequelize.DECIMAL,
+  },
+  sadness: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  joy: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  fear: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  disgust: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  anger: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+});
+
+User.hasMany(Answers);
+Answers.hasOne(SOAnalysis);
+
+sequelize.sync({ force: true });
+// sequelize.sync();
 
 module.exports.User = User;
+module.exports.Answers = Answers;
+module.exports.SOAnalysis = SOAnalysis;
