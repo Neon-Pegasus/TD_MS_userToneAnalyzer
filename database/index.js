@@ -38,13 +38,28 @@ const Answers = sequelize.define('Answers', {
 
 const SOAnalysis = sequelize.define('SOAnalysis', {
   positive: {
-    type: Sequelize.DECIMAL,
+    type: Sequelize.DECIMAL(10, 7),
   },
   negative: {
-    type: Sequelize.DECIMAL,
+    type: Sequelize.DECIMAL(10, 7),
   },
   neutral: {
     type: Sequelize.DECIMAL,
+  },
+  sadness: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  joy: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  fear: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  disgust: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  anger: {
+    type: Sequelize.DECIMAL(10, 7),
   },
 });
 
@@ -52,6 +67,7 @@ User.hasMany(Answers);
 Answers.hasOne(SOAnalysis);
 
 sequelize.sync({ force: true });
+// sequelize.sync();
 
 module.exports.User = User;
 module.exports.Answers = Answers;
