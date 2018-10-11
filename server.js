@@ -36,16 +36,9 @@ app.post('/', (req, res) => {
     });
 });
 
-/* app.get('/', (req, res) => {
-  natLanAnalyze('hello')
-    .then((result) => {
-      console.log(JSON.stringify(result, null, 2));
-      res.send('hello');
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}); */
+app.get('/', (req, res) => {
+  res.send('hello microservice');
+});
 
 app.listen(port, () => {
   console.log(`listening on port ${port}`);
