@@ -1,4 +1,4 @@
-const exampleData = require('../exampleData/newUserData');
+// const exampleData = require('../exampleData/newUserData');
 
 const parseSentiment = (arr) => {
   const len = arr.length;
@@ -79,6 +79,3 @@ const parseData = (arr) => {
 };
 
 module.exports.parseData = parseData;
-
-const result = parseData(exampleData);
-console.log(result);
