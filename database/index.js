@@ -2,13 +2,13 @@ const Sequelize = require('sequelize');
 require('dotenv').config();
 
 //  local connection
-const sequelize = new Sequelize('userIBM', 'root', `${process.env.DB_password}`, {
-  host: 'localhost',
-  dialect: 'mysql',
-});
+// const sequelize = new Sequelize('userIBM', 'root', `${process.env.DB_password}`, {
+//   host: 'localhost',
+//   dialect: 'mysql',
+// });
 
 //  cloud connection
-// const sequelize = new Sequelize(`${process.env.CLEARDB_DATABASE_URL}`);
+const sequelize = new Sequelize(`${process.env.CLEARDB_DATABASE_URL}`);
 
 //  testing DB connection
 sequelize
@@ -24,6 +24,9 @@ sequelize
 const User = sequelize.define('User', {
   githubUsername: {
     type: Sequelize.STRING,
+    get() {
+      return this.get('id');
+    },
   },
   SOUsername: {
     type: Sequelize.STRING,
@@ -66,8 +69,8 @@ const SOAnalysis = sequelize.define('SOAnalysis', {
 User.hasMany(Answers);
 Answers.hasOne(SOAnalysis);
 
-sequelize.sync({ force: true });
-// sequelize.sync();
+// sequelize.sync({ force: true });
+sequelize.sync({ force: false });
 
 module.exports.User = User;
 module.exports.Answers = Answers;

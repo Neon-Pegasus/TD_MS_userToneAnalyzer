@@ -2,86 +2,42 @@ const express = require('express');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const db = require('./database/index');
-const { natLanAnalyze } = require('./watson/naturalLan');
-
-const exampleDataSO = require('./exampleData/dataSO');
+const { saveForNewUser } = require('./database/newUserUtils');
+const { queryForUser } = require('./database/oldUserUtils');
+const { parseData } = require('./database/helpers');
+// const { natLanAnalyze } = require('./watson/naturalLan');
+// const exampleDataSO = require('./exampleData/dataSO');
 
 const app = express();
-const port = process.env.PORT || 8888;
+const port = process.env.PORT || 4654;
 
 app.use(bodyParser.json(), bodyParser.urlencoded({ extended: true }));
 
 app.post('/', (req, res) => {
   const { username } = req.body;
-  const data = req.body.SOAnswers || exampleDataSO;
-  let userId = null;
-  db.User.findOrCreate({ where: { SOUsername: username } })
-    .spread((user) => {
-      return user.get({ plain: true });
-    })
-    .then((result) => {
-      const answers = data.map((el) => {
-        if (el !== '' || el !== ' ') {
-          return {
-            UserId: result.id,
-            answer: el,
-          };
-        }
-        return null;
-      });
-      userId = result.id;
-      return db.Answers.bulkCreate(answers);
-    })
-    .then(() => {
-      return db.Answers.findAll({ where: { UserId: userId }, attributes: ['id', 'answer'] });
-    })
-    .then((result) => {
-      const promiseArray = [];
-      for (let i = 0; i < result.length; i += 1) {
-        if (result[i].answer) {
-          promiseArray[result[i].id] = natLanAnalyze(result[i].answer);
-        }
+  const data = req.body.SOAnswers;
+  db.User.findOne({ where: { SOUsername: username } })
+    .then((user) => {
+      // user doesn't exist in db, save to db
+      if (!user) {
+        return saveForNewUser(username, data);
+        // user exist in db, query db
+      } if (user.dataValues.SOUsername) {
+        return queryForUser(user.dataValues);
       }
-      return Promise.all(promiseArray);
+      return new Error('Cannot find or create user in DB');
     })
-    .then((values) => {
-      console.log(JSON.stringify(values[0], null, 2));
-      const saveToDB = [];
-      for (let i = 0; i < values.length; i += 1) {
-        const analysis = values[i];
-        if (values[i]) {
-          const object = {
-            AnswerId: i,
-            [analysis.sentiment.document.label]: analysis.sentiment.document.score,
-            sadness: analysis.emotion.document.emotion.sadness,
-            joy: analysis.emotion.document.emotion.joy,
-            fear: analysis.emotion.document.emotion.fear,
-            disgust: analysis.emotion.document.emotion.disgust,
-            anger: analysis.emotion.document.emotion.anger,
-          };
-          saveToDB.push(object);
-        }
-      }
-      return db.SOAnalysis.bulkCreate(saveToDB);
-    })
+    .then(parseData)
     .then((result) => {
-      console.log(result);
+      res.send(result);
     })
     .catch((err) => {
-      console.log(err);
+      res.send(err);
     });
-  res.send('hihi');
 });
 
 app.get('/', (req, res) => {
-  natLanAnalyze('hello')
-    .then((result) => {
-      console.log(JSON.stringify(result, null, 2));
-      res.send('hello');
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  res.send('hello microservice');
 });
 
 app.listen(port, () => {

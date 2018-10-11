@@ -13,6 +13,7 @@ module.exports = {
     },
     rules: {
         "no-underscore-dangle": "off",
-        "arrow-body-style": ["error", "always"]
+        "arrow-body-style": ["error", "always"],
+        "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }]
     },
 };
