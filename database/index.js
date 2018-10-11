@@ -69,8 +69,8 @@ const SOAnalysis = sequelize.define('SOAnalysis', {
 User.hasMany(Answers);
 Answers.hasOne(SOAnalysis);
 
-sequelize.sync({ force: true });
-// sequelize.sync();
+// sequelize.sync({ force: true });
+sequelize.sync({ force: false });
 
 module.exports.User = User;
 module.exports.Answers = Answers;
