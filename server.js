@@ -3,8 +3,8 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 const db = require('./database/index');
 const { saveForNewUser } = require('./database/newUserUtils');
+const { queryForUser } = require('./database/oldUserUtils');
 const { natLanAnalyze } = require('./watson/naturalLan');
-
 const exampleDataSO = require('./exampleData/dataSO');
 
 const app = express();
@@ -22,14 +22,16 @@ app.post('/', (req, res) => {
         return saveForNewUser(username, data);
         // user exist in db, query db
       } if (user.dataValues.SOUsername) {
-        res.send('true');
+        // const userInfo = user.dataValues;
+        return queryForUser(user.dataValues);
       }
+      return new Error('Cannot find or create user in DB');
     })
     .then((result) => {
       res.send(result);
     })
     .catch((err) => {
-      console.error(err);
+      res.send(err);
     });
 });
 

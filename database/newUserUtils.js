@@ -69,7 +69,6 @@ const saveForNewUser = (username, answers) => {
     })
     .then(() => {
       return Answers.findAll({ where: { UserId }, attributes: ['id', 'answer'] });
-      // return answersList;
     })
     .then((result) => {
       answersList = result;
@@ -77,7 +76,6 @@ const saveForNewUser = (username, answers) => {
     })
     .then(analyzeLan)
     .then((result) => {
-      // return answersList;
       return parseLan(answersList, result);
     })
     .catch((err) => {
