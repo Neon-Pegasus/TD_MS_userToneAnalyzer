@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const db = require('./database/index');
+const { saveForNewUser } = require('./database/newUserUtils');
 const { natLanAnalyze } = require('./watson/naturalLan');
 
 const exampleDataSO = require('./exampleData/dataSO');
@@ -14,63 +15,22 @@ app.use(bodyParser.json(), bodyParser.urlencoded({ extended: true }));
 app.post('/', (req, res) => {
   const { username } = req.body;
   const data = req.body.SOAnswers || exampleDataSO;
-  let userId = null;
-  db.User.findOrCreate({ where: { SOUsername: username } })
-    .spread((user) => {
-      return user.get({ plain: true });
-    })
-    .then((result) => {
-      const answers = data.map((el) => {
-        if (el !== '' || el !== ' ') {
-          return {
-            UserId: result.id,
-            answer: el,
-          };
-        }
-        return null;
-      });
-      userId = result.id;
-      return db.Answers.bulkCreate(answers);
-    })
-    .then(() => {
-      return db.Answers.findAll({ where: { UserId: userId }, attributes: ['id', 'answer'] });
-    })
-    .then((result) => {
-      const promiseArray = [];
-      for (let i = 0; i < result.length; i += 1) {
-        if (result[i].answer) {
-          promiseArray[result[i].id] = natLanAnalyze(result[i].answer);
-        }
+  db.User.findOne({ where: { SOUsername: username } })
+    .then((user) => {
+      // user doesn't exist in db, save to db
+      if (!user) {
+        return saveForNewUser(username, data);
+        // user exist in db, query db
+      } if (user.dataValues.SOUsername) {
+        res.send('true');
       }
-      return Promise.all(promiseArray);
-    })
-    .then((values) => {
-      console.log(JSON.stringify(values[0], null, 2));
-      const saveToDB = [];
-      for (let i = 0; i < values.length; i += 1) {
-        const analysis = values[i];
-        if (values[i]) {
-          const object = {
-            AnswerId: i,
-            [analysis.sentiment.document.label]: analysis.sentiment.document.score,
-            sadness: analysis.emotion.document.emotion.sadness,
-            joy: analysis.emotion.document.emotion.joy,
-            fear: analysis.emotion.document.emotion.fear,
-            disgust: analysis.emotion.document.emotion.disgust,
-            anger: analysis.emotion.document.emotion.anger,
-          };
-          saveToDB.push(object);
-        }
-      }
-      return db.SOAnalysis.bulkCreate(saveToDB);
     })
     .then((result) => {
-      console.log(result);
+      res.send(result);
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
-  res.send('hihi');
 });
 
 app.get('/', (req, res) => {
