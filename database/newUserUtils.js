@@ -49,6 +49,12 @@ const parseLan = (answers, promises) => {
   });
 };
 
+const retrieveDataValues = (arr) => {
+  return arr.map((element) => {
+    return element.dataValues;
+  });
+};
+
 const saveForNewUser = (username, answers) => {
   const validAnswers = deleteInvalid(answers);
   let UserId = null;
@@ -71,7 +77,7 @@ const saveForNewUser = (username, answers) => {
       return Answers.findAll({ where: { UserId }, attributes: ['id', 'answer'] });
     })
     .then((result) => {
-      answersList = result;
+      answersList = retrieveDataValues(result);
       return answersList;
     })
     .then(analyzeLan)

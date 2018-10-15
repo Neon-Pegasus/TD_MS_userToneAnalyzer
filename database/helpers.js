@@ -71,6 +71,7 @@ const deleteInvalid = (arr) => {
 };
 
 const parseData = (arr) => {
+  console.log('line 74 helpers.js', arr);
   return deleteInvalid(arr)
     .then(parseSentiment)
     .catch((err) => {

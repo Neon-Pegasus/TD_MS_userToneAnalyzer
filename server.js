@@ -5,8 +5,6 @@ const db = require('./database/index');
 const { saveForNewUser } = require('./database/newUserUtils');
 const { queryForUser } = require('./database/oldUserUtils');
 const { parseData } = require('./database/helpers');
-// const { natLanAnalyze } = require('./watson/naturalLan');
-// const exampleDataSO = require('./exampleData/dataSO');
 
 const app = express();
 const port = process.env.PORT || 4654;
