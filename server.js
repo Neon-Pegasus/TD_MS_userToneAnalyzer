@@ -36,8 +36,7 @@ app.post('/api/soAnalysis', (req, res) => {
 });
 
 app.post('/api/githubAnalysis', (req, res) => {
-  // const { username } = req.body || 'andrew';
-  const username = 'andrew';
+  const { username } = req.body;
   const exampleData = retrieveCommentBody(username, gitHubData);
   db.User.findOne({ where: { githubUsername: username } })
     .then((user) => {

@@ -71,7 +71,6 @@ const deleteInvalid = (arr) => {
 };
 
 const parseData = (arr) => {
-  console.log('line 74', arr);
   return deleteInvalid(arr)
     .then(parseSentiment)
     .catch((err) => {
