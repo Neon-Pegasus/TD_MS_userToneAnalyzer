@@ -99,8 +99,6 @@ Answers.hasOne(SOAnalysis);
 
 // sequelize.sync({ force: true });
 sequelize.sync({ force: false });
-// GHAnalysis.sync({ force: true });
-
 
 module.exports.User = User;
 module.exports.Answers = Answers;
