@@ -49,6 +49,7 @@ app.post('/api/githubAnalysis', (req, res) => {
       }
       return new Error('Cannot find or create user in DB');
     })
+    .then(parseData)
     .then((result) => {
       res.send(result);
     })
