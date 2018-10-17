@@ -66,12 +66,42 @@ const SOAnalysis = sequelize.define('SOAnalysis', {
   },
 });
 
+const GHAnalysis = sequelize.define('GHAnalysis', {
+  positive: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  negative: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  neutral: {
+    type: Sequelize.DECIMAL,
+  },
+  sadness: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  joy: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  fear: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  disgust: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+  anger: {
+    type: Sequelize.DECIMAL(10, 7),
+  },
+});
+
 User.hasMany(Answers);
+User.hasMany(GHAnalysis);
 Answers.hasOne(SOAnalysis);
 
 // sequelize.sync({ force: true });
-sequelize.sync({ force: false });
+sequelize.sync({ force: false })
+
 
 module.exports.User = User;
 module.exports.Answers = Answers;
 module.exports.SOAnalysis = SOAnalysis;
+module.exports.GHAnalysis = GHAnalysis;

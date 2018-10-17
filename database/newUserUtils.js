@@ -1,4 +1,4 @@
-const { User, Answers, SOAnalysis } = require('./index');
+const { User, Answers, SOAnalysis, GHAnalysis } = require('./index');
 const { natLanAnalyze } = require('../watson/naturalLan');
 
 function deleteInvalid(arr) {
@@ -89,4 +89,22 @@ const saveForNewUser = (username, answers) => {
     });
 };
 
+const saveNewGitHubUser = (username, comments) => {
+  let UserId = null;
+  return User.create({ githubUsername: username })
+    .then((user) => {
+      console.log('line 96', user.dataValues.id);
+      console.log('line 97', user.get('id'));
+      UserId = user.dataValues.id;
+      return 'hello';
+    })
+    // .then((id) => {
+    //   return id;
+    // })
+    .catch((err) => {
+      return `error ${err.message}`;
+    });
+};
+
 module.exports.saveForNewUser = saveForNewUser;
+module.exports.saveNewGitHubUser = saveNewGitHubUser;

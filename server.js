@@ -2,16 +2,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const db = require('./database/index');
-const { saveForNewUser } = require('./database/newUserUtils');
+const { saveForNewUser, saveNewGitHubUser } = require('./database/newUserUtils');
 const { queryForUser } = require('./database/oldUserUtils');
-const { parseData } = require('./database/helpers');
+const { parseData, retrieveCommentBody } = require('./database/helpers');
+const gitHubData = require('./exampleData/dataGH');
 
 const app = express();
 const port = process.env.PORT || 4654;
 
 app.use(bodyParser.json(), bodyParser.urlencoded({ extended: true }));
 
-app.post('/', (req, res) => {
+app.post('/api/soAnalysis', (req, res) => {
   const { username } = req.body;
   const data = req.body.SOAnswers;
   db.User.findOne({ where: { SOUsername: username } })
@@ -26,6 +27,28 @@ app.post('/', (req, res) => {
       return new Error('Cannot find or create user in DB');
     })
     .then(parseData)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((err) => {
+      res.send(err);
+    });
+});
+
+app.post('/api/githubAnalysis', (req, res) => {
+  // const { username } = req.body || 'andrew';
+  const username = 'andrew';
+  const exampleData = retrieveCommentBody(username, gitHubData);
+  db.User.findOne({ where: { githubUsername: username } })
+    .then((user) => {
+      if (!user) {
+        return saveNewGitHubUser(username, exampleData);
+      }
+      if (user.dataValues.githubUsername) {
+        return 'user does exist';
+      }
+      return new Error('Cannot find or create user in DB');
+    })
     .then((result) => {
       res.send(result);
     })
