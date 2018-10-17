@@ -1,4 +1,4 @@
-const { Answers, SOAnalysis } = require('./index');
+const { Answers, SOAnalysis, GHAnalysis } = require('./index');
 
 const parseIds = (ids) => {
   return new Promise((resolve, reject) => {
@@ -24,4 +24,14 @@ const queryForUser = ({ id }) => {
     });
 };
 
+const queryForGitHubUser = ({ id }) => {
+  return GHAnalysis.findAll({
+    where: { UserId: id },
+  })
+    .catch((err) => {
+      return err;
+    });
+};
+
+module.exports.queryForGitHubUser = queryForGitHubUser;
 module.exports.queryForUser = queryForUser;

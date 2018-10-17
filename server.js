@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 const db = require('./database/index');
 const { saveForNewUser, saveNewGitHubUser } = require('./database/newUserUtils');
-const { queryForUser } = require('./database/oldUserUtils');
+const { queryForUser, queryForGitHubUser } = require('./database/oldUserUtils');
 const { parseData, retrieveCommentBody } = require('./database/helpers');
 const gitHubData = require('./exampleData/dataGH');
 
@@ -45,7 +45,7 @@ app.post('/api/githubAnalysis', (req, res) => {
         return saveNewGitHubUser(username, exampleData);
       }
       if (user.dataValues.githubUsername) {
-        return 'user does exist';
+        return queryForGitHubUser(user.dataValues);
       }
       return new Error('Cannot find or create user in DB');
     })
