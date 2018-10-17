@@ -348,3 +348,38 @@ module.exports = [
     AnswerId: 281,
   },
 ];
+
+module.exports = [
+  {
+    sentiment: {
+      labels: [
+        'Neutral',
+        'Positive',
+        'Negative',
+      ],
+      data: [
+        9,
+        12,
+        8,
+      ],
+    },
+  },
+  {
+    emotion: {
+      labels: [
+        'Sadness',
+        'Joy',
+        'Fear',
+        'Disgust',
+        'Anger',
+      ],
+      data: [
+        0.2577819655172414,
+        0.1826078620689655,
+        0.06859010344827586,
+        0.05188851724137931,
+        0.09804044827586207,
+      ],
+    },
+  },
+];

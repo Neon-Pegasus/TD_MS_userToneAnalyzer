@@ -78,4 +78,16 @@ const parseData = (arr) => {
     });
 };
 
+const retrieveCommentBody = (username, arr) => {
+  const copy = arr.slice(0);
+  const output = copy.filter((item) => {
+    return item.userName === username && item.commentsBody.length
+    && item.commentsBody[0].length >= 10;
+  }).reduce((acc, cv) => {
+    return acc.concat(cv.commentsBody);
+  }, []);
+  return output;
+};
+
+module.exports.retrieveCommentBody = retrieveCommentBody;
 module.exports.parseData = parseData;

@@ -1,4 +1,6 @@
-const { User, Answers, SOAnalysis } = require('./index');
+const {
+  User, Answers, SOAnalysis, GHAnalysis,
+} = require('./index');
 const { natLanAnalyze } = require('../watson/naturalLan');
 
 function deleteInvalid(arr) {
@@ -89,4 +91,58 @@ const saveForNewUser = (username, answers) => {
     });
 };
 
+function analyzeLanForGitHub(arr) {
+  const comments = arr.slice(0);
+  const promises = [];
+  for (let i = 0; i < comments.length; i += 1) {
+    const comment = comments[i];
+    promises.push(natLanAnalyze(comment));
+  }
+  return Promise.all(promises);
+}
+
+const parseLanforGitHub = (UserId, promises) => {
+  return new Promise((resolve, reject) => {
+    const parseComments = [];
+    if (promises.length) {
+      for (let i = 0; i < promises.length; i++) {
+        const { label, score } = promises[i].sentiment.document;
+        const {
+          sadness, joy, fear, disgust, anger,
+        } = promises[i].emotion.document.emotion;
+        const dbObj = {
+          UserId,
+          [label]: score,
+          sadness,
+          joy,
+          fear,
+          disgust,
+          anger,
+        };
+        parseComments.push(dbObj);
+      }
+      resolve(GHAnalysis.bulkCreate(parseComments));
+    }
+    reject(new Error('Analyzed Data does not contain anything'));
+  });
+};
+
+const saveNewGitHubUser = (username, comments) => {
+  let UserId = null;
+  return User.create({ githubUsername: username })
+    .then((user) => {
+      UserId = user.get('id');
+    })
+    .then(() => {
+      return analyzeLanForGitHub(comments);
+    })
+    .then((result) => {
+      return parseLanforGitHub(UserId, result);
+    })
+    .catch((err) => {
+      return `error ${err.message}`;
+    });
+};
+
 module.exports.saveForNewUser = saveForNewUser;
+module.exports.saveNewGitHubUser = saveNewGitHubUser;
