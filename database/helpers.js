@@ -44,8 +44,17 @@ const parseSentiment = (arr) => {
   const { data } = sentObj.sentiment;
   const emoData = emoObj.emotion.data;
   data.push(object.Neutral, object.Positive, object.Negative);
-  emoData.push(object.Sadness / len, object.Joy / len,
-    object.Fear / len, object.Disgust / len, object.Anger / len);
+
+  function floatNums(leng) {
+    return function (num) {
+      const avg = num / leng;
+      return parseFloat((avg * 100).toFixed(2));
+    };
+  }
+
+  const getAvg = floatNums(len);
+  emoData.push(getAvg(object.Sadness), getAvg(object.Joy),
+    getAvg(object.Fear), getAvg(object.Disgust), getAvg(object.Anger));
   return [sentObj, emoObj];
 };
 
