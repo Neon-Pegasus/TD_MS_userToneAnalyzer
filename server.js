@@ -5,7 +5,7 @@ const db = require('./database/index');
 const { saveForNewUser, saveNewGitHubUser } = require('./database/newUserUtils');
 const { queryForUser, queryForGitHubUser } = require('./database/oldUserUtils');
 const { parseData, retrieveCommentBody } = require('./database/helpers');
-const gitHubData = require('./exampleData/dataGH');
+// const gitHubData = require('./exampleData/dataGH');
 
 const app = express();
 const port = process.env.PORT || 4654;
@@ -36,8 +36,8 @@ app.post('/api/soAnalysis', (req, res) => {
 });
 
 app.post('/api/githubAnalysis', (req, res) => {
-  const { username } = req.body;
-  const exampleData = retrieveCommentBody(username, gitHubData);
+  const { username, githubComments } = req.body;
+  const exampleData = retrieveCommentBody(username, githubComments);
   db.User.findOne({ where: { githubUsername: username } })
     .then((user) => {
       if (!user) {
